@@ -5,9 +5,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ public class UserActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private Spinner sp_page;
     private List<User> userList = new ArrayList<>();
+    private EditText edt_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class UserActivity extends AppCompatActivity {
 
         // Gọi API để lấy dữ liệu cho trang đầu tiên
         fetchDataFromAPI(1);
+        handleSearchEdt();
     }
 
     private void setupSpinner() {
@@ -107,5 +112,38 @@ public class UserActivity extends AppCompatActivity {
                 Toast.makeText(UserActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void handleSearchEdt() {
+        edt_search = findViewById(R.id.edt_search);
+        edt_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String searchTxt = s.toString().trim();
+                filterUser(searchTxt);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void filterUser(String searchTxt) {
+        List<User> filterUser = new ArrayList<>();
+        for (User user : userList) {
+            if (user.getEmail().toLowerCase().contains(searchTxt.toLowerCase()) ||
+                    user.getLast_name().toLowerCase().contains(searchTxt.toLowerCase()) ||
+                    user.getFirst_name().toLowerCase().contains(searchTxt.toLowerCase())) {
+                filterUser.add(user);
+            }
+        }
+        userAdapter.setUserList(filterUser);
     }
 }

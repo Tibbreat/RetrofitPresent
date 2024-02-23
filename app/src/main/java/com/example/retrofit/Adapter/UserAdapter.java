@@ -1,6 +1,7 @@
 package com.example.retrofit.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.retrofit.Activity.UserDetailActivity;
 import com.example.retrofit.Entity.User;
 import com.example.retrofit.R;
 
@@ -23,6 +25,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public UserAdapter(Context context, List<User> userList) {
         this.context = context;
         this.userList = userList;
+    }
+    public void setUserList(List<User> list) {
+        this.userList = list;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -39,7 +45,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         holder.textViewEmail.setText(user.getEmail());
         //Dùng Glide lib để load ảnh dạng http
         Glide.with(context).load(user.getAvatar()).into(holder.imageViewAvatar);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, UserDetailActivity.class);
+                intent.putExtra("user", userList.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
